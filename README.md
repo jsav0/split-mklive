@@ -1,48 +1,22 @@
-## The Void Linux image/live/rootfs maker and installer
+## The Void Linux image/live/rootfs maker and installer - adapted for Split Linux
 
-This repository contains utilities for Void Linux:
+Split Linux is proudly based on Void Linux. This is how to build it:
 
- * installer (The Void Linux el-cheapo installer for x86)
- * mklive    (The Void Linux live image maker for x86)
-
- * mkimage   (The Void Linux image maker for ARM platforms)
- * mkplatformfs (The Void Linux filesystem tool to produce a rootfs for a particular platform)
- * mkrootfs  (The Void Linux rootfs maker for ARM platforms)
- * mknet (Script to generate netboot tarballs for Void)
-
-#### Build Dependencies
- * make
-
-#### Dependencies
- * Compression type for the initramfs image
-   * liblz4 (for lz4, xz) (default)
- * xbps>=0.45
- * qemu-user-static binaries (for mkrootfs)
-
-#### Usage
 
 Type
 
     $ make
 
-and then see the usage output:
+then build Split Linux:
 
-    $ ./mklive.sh -h
-    $ ./mkrootfs.sh -h
-    $ ./mkimage.sh -h
+    $ ./build-x86-images.sh -a x86_64-musl -b split -r https://gitlab.com/kevcrumb/split-packages/hostdir/binpkgs-/raw/master/
 
-#### Examples
 
-Build a native live image with runit and keyboard set to 'fr':
+When asked to accept signatures, verify the fingerprint and press enter:
 
-    # ./mklive.sh -k fr
+    `https://gitlab.com/kevcrumb/split-packages/-/raw/master/hostdir/binpkgs' repository has been RSA signed by "Kevin Crumb <kevcrumb@splitlinux.org>"
+    Fingerprint: 2e:cd:12:9f:a9:b8:fe:b3:36:ae:d2:cf:56:47:8d:ce
+    Do you want to import this public key? [Y/n]
 
-Build an i686 (on x86\_64) live image with some additional packages:
 
-    # ./mklive.sh -a i686 -p 'vim rtorrent'
-
-Build an x86\_64 musl live image with packages stored in a local repository:
-
-    # ./mklive.sh -a x86_64-musl -r /path/to/host/binpkgs
-
-See the usage output for more information :-)
+See voidlinux/void-mklive for details on the available tools.

@@ -7,7 +7,7 @@ while getopts "a:b:hr:" opt; do
 case $opt in
 	a) ARCH="$OPTARG";;
 	b) IMAGE="$OPTARG";;
-	h) echo "${0#/*}: [-a arch] [-b base|e|xfce|mate|cinnamon|gnome|kde|lxde|lxqt] [-r repo]" >&2; exit 1;;
+	h) echo "${0#/*}: [-a arch] [-b base|e|xfce|mate|cinnamon|gnome|kde|lxde|lxqt|split] [-r repo]" >&2; exit 1;;
 	r) REPO="-r $OPTARG $REPO";;
 esac
 done
@@ -25,6 +25,7 @@ readonly GNOME_IMG=void-live-${ARCH}-${DATE}-gnome.iso
 readonly KDE_IMG=void-live-${ARCH}-${DATE}-kde.iso
 readonly LXDE_IMG=void-live-${ARCH}-${DATE}-lxde.iso
 readonly LXQT_IMG=void-live-${ARCH}-${DATE}-lxqt.iso
+readonly SPLIT_IMG=split-live-${ARCH}-${DATE}.iso
 
 readonly GRUB="grub-i386-efi grub-x86_64-efi"
 
@@ -38,6 +39,7 @@ readonly GNOME_PKGS="$X_PKGS gnome gnome-terminal firefox-esr"
 readonly KDE_PKGS="$X_PKGS kde5 konsole firefox dolphin"
 readonly LXDE_PKGS="$X_PKGS lxdm lxde gvfs-afc gvfs-mtp gvfs-smb udisks2 firefox-esr"
 readonly LXQT_PKGS="$X_PKGS lxdm lxqt gvfs-afc gvfs-mtp gvfs-smb udisks2 qupzilla"
+readonly SPLIT_PKGS="$X_PKGS splitlinux-tor-router splitlinux-lxc-conf"
 
 [ ! -x mklive.sh ] && exit 0
 
@@ -86,5 +88,10 @@ fi
 if [ "$IMAGE" = kde ]; then
 	if [ ! -e $KDE_IMG ]; then
 		./mklive.sh -a $ARCH -o $KDE_IMG -p "$KDE_PKGS" ${REPO} $@
+	fi
+fi
+if [ "$IMAGE" = split ]; then
+	if [ ! -e $SPLIT_IMG ]; then
+		./mklive.sh -a $ARCH -o $SPLIT_IMG -p "$SPLIT_PKGS" ${REPO} $@
 	fi
 fi
