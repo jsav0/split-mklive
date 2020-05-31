@@ -1,0 +1,21 @@
+# https://docs.gitlab.com/ee/ci/yaml/
+#image: voidlinux/voidlinux-musl
+image: zaoqi/voidlinux-ci
+
+pages:
+  stage: deploy
+  script:
+    - xbps-install -Suy
+    - xbps-install -Sy make bash lzo kmod dosfstools e2fsprogs
+    - make
+    - mknod /dev/loop0 b 7 0
+    - ./build-x86-images.sh -a x86_64-musl -b split -r https://gitlab.com/kevcrumb/split-packages/-/raw/master/hostdir/binpkgs
+    - mkdir public
+    - mv split-live-*.iso public/
+    - cd public/ && ln -s split-live-*.iso split-live-x86_64-musl-current.iso
+    - for f in * ; do echo "<a href='$f'>$f</a><br/>" ; done > index.html
+  artifacts:
+    paths:
+    - public
+  only:
+  - master
