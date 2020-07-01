@@ -111,17 +111,11 @@ echo 'Adding skel .xinitrc script that executes the containerized one.'
 echo '# clear-env avoids leaking any env info into the container.
 # However, since clear-env (and login) unset $DISPLAY, the variable has to be
 # passed manually, so the container knows which one to use.
-#
-# Apparently setting PATH=/opt/splitlinux/beast/bin in the containers
-# /etc/environment has no effect. Thus it is defined here.
-# TODO find out how to correctly set it in /etc/environment instead.
 
 /bin/sudo lxc-attach --name "${USER}" --clear-env -- \
 	su "${USER}" --login \
-		--command="DISPLAY=${DISPLAY} PATH=/opt/splitlinux/beast/bin:${PATH} ${HOME}/.xinitrc" \
+		--command="DISPLAY=${DISPLAY} . ${HOME}/.xinitrc" \
 		2>&1 > "${HOME}/`basename $0`.log"
-
-# TODO lxc-stop when exiting X
 ' > ${NEWROOT}/etc/skel/.xinitrc
 
 
@@ -159,7 +153,8 @@ echo 'if [ -z $DISPLAY ] ; then
                         "RUNNING")
                                 # For this to work, put at least the following into the ~/.xinitrc on the hostsystem:
                                 # /bin/sudo lxc-attach --name "${USER}" dwm
-                                exec xinit -- :${DPNR} vt${XDG_VTNR} &> "${HOME}/.xsession.log"
+                                exec xinit -- :${DPNR} vt${XDG_VTNR} &> "${HOME}/.xsession.log" ||
+                                    echo "xinit failed. Dropping to a shell." && bash
                                 ;;
                 esac
         fi
