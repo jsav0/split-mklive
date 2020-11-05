@@ -88,6 +88,11 @@ else
     [ -z $uuid_of_swap_device ] || swapon -U ${uuid_of_swap_device}
 fi
 
+
+echo 'Populating host file system with contents from _host/override/etc/'
+cp -a ${NEWROOT}/var/lib/lxc/_host/override/etc/* ${NEWROOT}/etc/
+
+
 ### DEBUG ONLY
 #echo
 #echo 'Starting bash for debugging. Just `exit` when ready.'
