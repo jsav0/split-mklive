@@ -50,6 +50,7 @@ while [ $choice -lt 0 -o $choice -gt $total ] ; do
         # pressing Enter. It is bash-specific, however. In case it fails, the
         # alternative read is used as fallback.
         read -sn1 choice 2>/dev/null || read choice
+        echo
     else
         if [ $total -eq 0 ] ; then
 	    case ${retries} in
@@ -76,6 +77,10 @@ done
 if [ $choice -eq 0 ] ; then
     echo 'Booting without decrypting any device.'
 else
+    echo
+    keymap=`sed --silent 's#^KEYMAP=\(.*\)$#\1#p' $NEWROOT/etc/vconsole.conf $NEWROOT/etc/rc.conf 2>/dev/null | awk 'NR==1'`
+    [ -z $keymap ] || loadkeys "$keymap" && echo "Keymap is '$keymap'. To change use the vconsole.keymap cmdline argument." && echo
+
     uuid_of_luks_device=`echo "$crypto_devices" | sed --silent "${choice}p" | awk '{ print $3 }'`
     cryptsetup open /dev/disk/by-uuid/${uuid_of_luks_device} split
 
@@ -83,9 +88,11 @@ else
     lvm vgchange --activate y split &&
         mount /dev/mapper/split-horde /sysroot/var/lib/lxc
 
-    echo 'Swapping on "swap" logical volume of "split" volume group (if both exist).'
-    uuid_of_swap_device=`lsblk --noheadings --list --output FSTYPE,NAME,UUID | sed --silent 's#^swap \+split-swap \+##p'`
-    [ -z $uuid_of_swap_device ] || swapon -U ${uuid_of_swap_device}
+    #echo 'Swapping on "swap" logical volume of "split" volume group (if both exist).'
+    #uuid_of_swap_device=`lsblk --noheadings --list --output FSTYPE,NAME,UUID | sed --silent 's#^swap \+split-swap \+##p'`
+    # `swapon` is not available
+    # TODO see if the partition is used without any explicit command
+    #[ -z $uuid_of_swap_device ] || swapon -U ${uuid_of_swap_device}
 fi
 
 
@@ -153,9 +160,11 @@ echo ' When a member user of this group logs in and there is yet again the same 
 chroot ${NEWROOT} sh -c '
 	cd /var/lib/lxc/ &&
             for u in * ; do
-	        useradd --create-home --groups lxc "${u}"
-	        shadow_entry=`grep -wE "^${u}:" /var/lib/lxc/${u}/rootfs/etc/shadow`
-	        sed -i "s#^${u}:.*#${shadow_entry}#g" /etc/shadow
+                if [ -d "$u/rootfs/home/$u" ] ; then
+	            useradd --create-home --groups lxc "${u}"
+	            shadow_entry=`grep -wE "^${u}:" /var/lib/lxc/${u}/rootfs/etc/shadow`
+	            sed -i "s#^${u}:.*#${shadow_entry}#g" /etc/shadow
+                fi
 	    done
 '
 
