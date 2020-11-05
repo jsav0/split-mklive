@@ -89,6 +89,26 @@ else
 fi
 
 
+echo 'Setting password for root and anon as defined in _host/password.'
+password_file="${NEWROOT}/var/lib/lxc/_host/password"
+if [ -f "${password_file}" ] ; then
+    encrypted_password=`< ${password_file}`
+    expected_length=106
+
+    if [ ${#encrypted_password} -eq $expected_length ] ; then
+        chroot ${NEWROOT} sh -c "echo 'root:${encrypted_password}'              | chpasswd --encrypted"
+        chroot ${NEWROOT} sh -c "echo '${USERNAME:-anon}:${encrypted_password}' | chpasswd --encrypted"
+    else
+        echo "ERROR: Password from ${password_file} doesn't appear to have the correct length of $expected_length characters!" >&2
+        echo '       Be sure to provide an ENCRYPTED password as found in the second field of an /etc/shadow entry.'
+        echo '       Press ENTER to continue.' && read
+    fi
+else
+    echo "WARNING: No encrypted password found at ${password_file}!"
+    echo 'WARNING: Host user accounts will be able to login with the default password.'
+fi
+
+
 echo 'Populating host file system with contents from _host/override/etc/'
 cp -a ${NEWROOT}/var/lib/lxc/_host/override/etc/* ${NEWROOT}/etc/
 
