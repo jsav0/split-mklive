@@ -49,7 +49,7 @@ while [ $choice -lt 0 -o $choice -gt $total ] ; do
         # -sn1 allows to input a single character without having to confirm by
         # pressing Enter. It is bash-specific, however. In case it fails, the
         # alternative read is used as fallback.
-        read -sn1 choice 2>/dev/null || read choice
+        read -sn1 choice 2>/dev/null && echo -n "$choice" || read choice
         echo
     else
         if [ $total -eq 0 ] ; then

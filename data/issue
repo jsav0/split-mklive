@@ -1,25 +1,19 @@
 ###############################################################################
 
-Welcome to the Void Linux Live system. Two users are available to log in:
+Welcome to Split Linux. In addition to your containerized identities, these two
+users are available to log into the host system:
 
-	- root:voidlinux
-	- anon:voidlinux
+	- root
+	- anon
+
+If the file _host/password holds a valid password in encrypted form, it will be
+set for these accounts. Otherwise their password defaults to "voidlinux".
 
 The `anon` user additionally has `sudo(8)` permissions to run any command
 without a password.
 
-To start the installation please type:
+Thanks for using Split Linux.
 
-    # void-installer
-
-and follow the on-screen instructions. To install additional software make
-sure to configure your network interface and then use:
-
-	- xbps-install(1) to install/update packages
-	- xbps-query(1) to query for package info
-
-Thanks for using Void Linux.
-
-    https://www.voidlinux.org
+    https://www.splitlinux.org
 
 ###############################################################################
