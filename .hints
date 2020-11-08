@@ -1,4 +1,8 @@
 Branches:
-  - upstream for pulling vanilla void-mklive
-  - split for development; merges upstream
-  - master merges split when ready to publish
+
+  - upstream     for pulling vanilla void-mklive
+                 `torsocks -a 172.18.0.2 -P 9050 --isolate git pull upstream master:upstream`
+  - split        for development; merges upstream
+                 `git merge upstream`
+  - master       merges split when ready to publish
+                 `git merge split`
