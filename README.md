@@ -10,7 +10,7 @@ Type
 then build:
 
     $ ./build-x86-images.sh -a x86_64-musl -b split \
-        -r https://splitlinux.gitlab.io/split-packages/musl
+        -r https://splitlinux.gitlab.io/split-packages
 
 
 *For the build to finish successfully split packages have to be as recent as the packages they depend on in the official Void repositiores. Otherwise they reference old versions which will not be available anymore.*

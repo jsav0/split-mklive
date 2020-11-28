@@ -9,7 +9,7 @@ pages:
     - xbps-install -Sy make bash lzo kmod dosfstools e2fsprogs
     - make
     - mknod /dev/loop0 b 7 0
-    - ./build-x86-images.sh -a x86_64-musl -b split -r https://splitlinux.gitlab.io/split-packages/musl
+    - ./build-x86-images.sh -a x86_64-musl -b split -r https://splitlinux.gitlab.io/split-packages
     - mkdir public
     - mv split-live-*.iso public/
     - cd public/ && ln -s split-live-*.iso split-live-x86_64-musl-current.iso

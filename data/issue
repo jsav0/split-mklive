@@ -12,7 +12,17 @@ set for these accounts. Otherwise their password defaults to "voidlinux".
 The `anon` user additionally has `sudo(8)` permissions to run any command
 without a password.
 
-Thanks for using Split Linux.
+
+When logged in with root permissions you may use this command to add a new Void
+Linux container/identity:
+
+        create_voidlinux_container <name> <id> [musl]
+
+If you omit the "musl" option the container is created as glibc. This looses
+you some coolness-points, but causes more applications to work properly.
+
+
+Thanks for using Split Linux. It's an honor to have you!
 
     https://www.splitlinux.org
 
