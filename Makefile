@@ -32,6 +32,7 @@ ALL_MASTERDIRS=$(foreach arch,$(MASTERDIRS), masterdir-$(arch))
 SUDO := sudo
 
 XBPS_REPOSITORY := -r https://alpha.de.repo.voidlinux.org/current -r https://alpha.de.repo.voidlinux.org/current/musl -r https://alpha.de.repo.voidlinux.org/current/aarch64
+SPLIT_PKGS := -r https://splitlinux.gitlab.io/split-packages -p 'dialog cryptsetup lvm2 mdadm xorg-minimal xorg-input-drivers xorg-video-drivers setxkbmap xauth font-misc-misc terminus-font dejavu-fonts-ttf alsa-plugins-pulseaudio splitlinux-tor-router splitlinux-lxc-conf'
 COMPRESSOR_THREADS=2
 
 %.sh: %.sh.in
@@ -92,6 +93,15 @@ pxe-all-print:
 
 void-%-NETBOOT-$(DATECODE).tar.gz: $(SCRIPTS) void-%-ROOTFS-$(DATECODE).tar.xz
 	$(SUDO) ./mknet.sh void-$*-ROOTFS-$(DATECODE).tar.xz
+
+split-%-ROOTFS-$(DATECODE).tar.xz: $(SCRIPTS)
+        $(SUDO) ./mkrootfs.sh $(XBPS_REPOSITORY) -x $(COMPRESSOR_THREADS) $*
+
+split-%-PLATFORMFS-$(DATECODE).tar.xz: $(SCRIPTS)
+        $(SUDO) ./mkplatformfs.sh $(XBPS_REPOSITORY) -r https://splitlinux.gitlab.io/split-packages -p 'splitlinux-tor-router splitlinux-lxc-conf' -x $(COMPRESSOR_THREADS) $* split-$(shell ./lib.sh platform2arch $*)-ROOTFS-$(DATECODE).tar.xz
+
+split-%-$(DATECODE).img.xz: split-%-PLATFORMFS-$(DATECODE).tar.xz
+        $(SUDO) ./mkimage.sh -x $(COMPRESSOR_THREADS) split-$*-PLATFORMFS-$(DATECODE).tar.xz
 
 masterdir-all-print:
 	@echo $(ALL_MASTERDIRS) | sed "s: :\n:g"
